@@ -1,0 +1,4 @@
+[submodule "common/crossic"]
+	path = common/crossic
+	url = https://github.com/dinn2018/crossic.git
+	ignore = dirty
