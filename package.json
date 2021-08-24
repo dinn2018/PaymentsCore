@@ -5,7 +5,7 @@
 	"engines": {
 		"node": ">= 12.18.0"
 	},
-	"repository": "https://github.com/dinn2018/ERC20-Payment",
+	"repository": "https://github.com/dinn2018/PaymentsCore",
 	"author": "Dinn",
 	"license": "MIT",
 	"keywords": [
