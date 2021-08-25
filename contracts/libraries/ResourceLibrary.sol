@@ -41,12 +41,6 @@ library ResourceLibrary {
         return abi.decode(data, (uint256));
     }
 
-    function safeBalances(IResource resource, address buyer) internal view returns(uint256) {
-        (bool success, bytes memory data) = address(resource).staticcall(abi.encodeWithSelector(resource.balances.selector, buyer));
-        require(success && data.length != 0, "Resource: call `balances` failed.");
-        return abi.decode(data, (uint256));
-    }
-
     function getAmountOut(
         IResource resource, 
         IUniswapV2Router02 routerV2, 
