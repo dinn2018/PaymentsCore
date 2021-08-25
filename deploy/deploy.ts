@@ -12,6 +12,10 @@ let from = ''
 let dep: DeploymentsExtension
 
 const router = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+const usdt = '0xE437E9a5fd870aF20a779A5fBA83bc53cC7C837A'
+const ever = '0xc0D05413823E6ebeA748285d468295eB384057A9'
+const receiver = '0x1d1B1b329bA09f0124F9B26edAA29c80F0275263'
+const oneToken = BigNumber.from(1e18.toString())
 
 const deployFuc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
@@ -46,9 +50,9 @@ const deployFuc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
 	const simpleResourceERC20 = await deploy(SimpleResourceERC20, [
 		rootChannle,
-		'0x9F651c776a3e46bA0f6bCB5C2e7226b7f85f86b1',
-		BigNumber.from(1e18.toString()),
-		'0x1d1B1b329bA09f0124F9B26edAA29c80F0275263'
+		usdt,
+		oneToken,
+		receiver
 	])
 	const simpleResourceERC20Factory = await ethers.getContractFactory(SimpleResourceERC20.contractName)
 	const simpleResourceERC20Functions = simpleResourceERC20Factory.attach(simpleResourceERC20).functions
@@ -62,7 +66,7 @@ const deployFuc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 			'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2':
 			'0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
 		1,
-		'0x1d1B1b329bA09f0124F9B26edAA29c80F0275263'
+		receiver
 	])
 	const simpleResourceETHFactory = await ethers.getContractFactory(SimpleResourceETH.contractName)
 	const simpleResourceETHFunctions = simpleResourceETHFactory.attach(simpleResourceETH).functions
@@ -72,11 +76,11 @@ const deployFuc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
 	const internalSwapResourceERC20 = await deploy(InternalSwapResourceERC20, [
 		rootChannle,
-		'0x9F651c776a3e46bA0f6bCB5C2e7226b7f85f86b1', // USDT
-		'0xDFd97C1Ea939e4A45Db73b77754D75F5982aE5Bb', // AB
-		'0x1d1B1b329bA09f0124F9B26edAA29c80F0275263', // swap to
+		usdt,
+		ever,
+		receiver,
 		router,
-		BigNumber.from(1e18.toString())
+		oneToken
 	])
 	const internalSwapResourceERC20Factory = await ethers.getContractFactory(InternalSwapResourceERC20.contractName)
 	const internalSwapResourceERC20Functions = internalSwapResourceERC20Factory.attach(internalSwapResourceERC20).functions
