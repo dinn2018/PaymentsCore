@@ -24,7 +24,7 @@ contract SimpleResourceERC20 is ResourceWithChannel, IResource {
 
     address public override beneficiary;
 
-    mapping(address => uint256) public override balances;
+    mapping(address => uint256) public balances;
 
     // For resource extral info
     mapping(uint256 => bytes) public slots;

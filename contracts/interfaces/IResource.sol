@@ -16,8 +16,6 @@ interface IResource {
 
     function getAmount(uint256 value) external view returns (uint256);
 
-    function balances(address from) external view returns (uint256);
-
     /// @notice `valuationToken` is for resource price valuation and beneficiary. 
     /// if you want use `ETH` to valuate your resource, set it `WETH`
     /// otherwise set it a ERC20 token address.
