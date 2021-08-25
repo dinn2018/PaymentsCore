@@ -45,6 +45,14 @@ task('InternalSwapResourceERC20:setPrice')
 		console.log('receipt', receipt)
 	})
 
+task('SimpleResourceERC20:balances')
+	.addOptionalParam('to', 'address')
+	.setAction(async (args:any, env: HardhatRuntimeEnvironment)=>{
+		const simpleResourceERC20 = await SimpleResourceERC20(env)
+		const balances = await simpleResourceERC20.balances(args.to)
+		console.log('balances', balances)
+	})
+
 task('InternalSwapResourceERC20:balances')
 	.addOptionalParam('to', 'address')
 	.setAction(async (args:any, env: HardhatRuntimeEnvironment)=>{
@@ -52,5 +60,4 @@ task('InternalSwapResourceERC20:balances')
 		const balances = await internalSwapResourceERC20.balances(args.to)
 		console.log('balances', balances)
 	})
-
 module.exports = {}

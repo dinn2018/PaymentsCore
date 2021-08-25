@@ -21,6 +21,21 @@ task('payment:getValuesIn', 'getValuesIn')
 		console.log('getValuesIn', getValuesIn)
 	})
 
+task('payment:getAmountOut', 'getValuesIn')
+	.addParam('resource', 'resource')
+	.addOptionalParam('prepath','prePath to resource')
+	.addOptionalParam('vi', 'value in')
+	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
+		const payment = await Payment(env)
+		const tokens = String(args.prepath).split(',')
+		const getAmountOut = await payment.getAmountOut(
+			args.resource,
+			tokens,
+			toToken(args.vi)
+		)
+		console.log('getAmountOut', getAmountOut)
+	})
+
 task('payment:buyExactTokenValuatedResourceByOtherToken', 'buyExactTokenValuatedResourceByOtherToken')
 	.addParam('resource', 'resource')
 	.addParam('prepath','prePath to resource')
