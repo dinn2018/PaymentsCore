@@ -57,9 +57,10 @@ contract RootChannel is Permitable, IRootChannel {
     // _checkpointManager 0x86e4dc95c7fbdbf52e33d563bbdb00823894c287
     // _root 0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2
 
-    constructor(ICheckpointManager _checkpointManager, IStateSender _root) {
+    constructor(address owner, ICheckpointManager _checkpointManager, IStateSender _root) {
         checkpointManager = _checkpointManager;
         root = _root;
+        transferOwnership(owner);
     }
 
     // set ChildChannel if not set already

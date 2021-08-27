@@ -30,6 +30,7 @@ contract SimpleResourceERC20 is ResourceWithChannel, IResource {
     mapping(uint256 => bytes) public slots;
 
     constructor(
+        address owner,
         IRootChannel _channel,
         IERC20 _valuationToken,
         uint256 _price,
@@ -39,6 +40,7 @@ contract SimpleResourceERC20 is ResourceWithChannel, IResource {
         price = _price;
         // will receive `token` to current contract
         beneficiary = _beneficiary;
+        transferOwnership(owner);
     }
 
     function spend(address buyer, uint256 amount) external override onlyChannel {

@@ -30,11 +30,13 @@ contract SimpleResourceETH is ResourceWithChannel, IResource {
     mapping(uint256 => bytes) public slots;
 
     constructor(
+        address owner,
         IRootChannel _channel,
         address _WETH,
         uint256 _price,
         address _beneficiary
     ) ResourceWithChannel(_channel) {
+        transferOwnership(owner);
         valuationToken = _WETH;
         price = _price;
         beneficiary = _beneficiary;

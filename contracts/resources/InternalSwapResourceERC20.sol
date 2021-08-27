@@ -37,6 +37,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
     bytes4 public childBuy = bytes4(keccak256("buy(address,address,uint256)"));
 
     constructor(
+        address owner,
         IRootChannel _channel,
         address _valuationToken,
         address _swapToken,
@@ -44,6 +45,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
         IUniswapV2Router02 _routerV2,
         uint256 _price
     ) ResourceWithChannel(_channel) {
+        transferOwnership(owner);
         valuationToken = _valuationToken;
         swapToken = _swapToken;
         swapTo = _swapTo;
