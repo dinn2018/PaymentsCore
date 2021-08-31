@@ -32,8 +32,8 @@ abstract contract BasePayment {
     }
 
     function _buyAfter(
-        IResource resource, 
-        address buyer, 
+        IResource resource,
+        address buyer,
         uint256 amount,
         uint256 value
     ) internal {

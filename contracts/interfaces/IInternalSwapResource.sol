@@ -16,6 +16,6 @@ interface IInternalSwapResource is IResource {
 
     function price() external view returns (uint256);
 
-    function swapTo() external view returns (address);
+    function swapReceiver() external view returns (address);
 
 }

@@ -27,7 +27,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
 
     address public override swapToken;
 
-    address public override swapTo;
+    address public override swapReceiver;
 
     mapping(address => uint256) public balances;
 
@@ -41,14 +41,14 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
         IRootChannel _channel,
         address _valuationToken,
         address _swapToken,
-        address _swapTo,
+        address _swapReceiver,
         IUniswapV2Router02 _routerV2,
         uint256 _price
     ) ResourceWithChannel(_channel) {
         transferOwnership(owner);
         valuationToken = _valuationToken;
         swapToken = _swapToken;
-        swapTo = _swapTo;
+        swapReceiver = _swapReceiver;
         routerV2 = _routerV2;
         price = _price;
         beneficiary = address(this);
@@ -61,7 +61,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
             value,
             0,
             swapPath(),
-            swapTo,
+            swapReceiver,
             block.timestamp.add(10)
         );
         sendMessageToChild(abi.encodeWithSelector(childBuy, address(this), buyer, amount));
