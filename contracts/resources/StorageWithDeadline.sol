@@ -10,7 +10,12 @@ import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "../interfaces/IResource.sol";
 import "./ResourceWithChannel.sol";
 
-contract BuyBackResource is ResourceWithChannel, IResource {
+contract StorageWithDeadline is ResourceWithChannel, IResource {
+
+	struct Balance {
+		uint256 total;
+		uint256 left;
+	}
 
     using SafeMath for uint256;
 
@@ -27,12 +32,14 @@ contract BuyBackResource is ResourceWithChannel, IResource {
 
     address public buyBackReceiver;
 
-    mapping(address => uint256) public balances;
+    mapping(address => Balance) public balances;
 
     // For resource extral info
     mapping(uint256 => bytes) public slots;
 
-    bytes4 public childBuy = bytes4(keccak256("buy(address,address,uint256)"));
+    bytes4 public mintStorage = bytes4(keccak256("mintStorage(address,address,uint256,uint256)"));
+
+	uint256 public expiration;
 
     constructor(
         address owner,
@@ -47,18 +54,20 @@ contract BuyBackResource is ResourceWithChannel, IResource {
         buyBackReceiver = _buyBackReceiver;
         routerV2 = _routerV2;
         price = _price;
+		expiration = 7 days;
         beneficiary = address(this);
     }
 
     function buy(address buyer, uint256 amount, uint256 value) external override onlyPermit {
-        balances[buyer] = balances[buyer].add(amount);
-        sendMessageToChild(abi.encodeWithSelector(childBuy, address(this), buyer, amount));
+        balances[buyer].total = balances[buyer].total.add(amount);
+		balances[buyer].left = balances[buyer].left.add(amount);
+        sendMessageToChild(abi.encodeWithSelector(mintStorage, address(this), buyer, amount, block.timestamp.add(expiration)));
         emit Bought(buyer, amount, value);
     }
 
     function spend(address buyer, uint256 amount) external override onlyChannel {
-        require(balances[buyer] >= amount, "Resource: not enough resources to spend.");
-        balances[buyer] = balances[buyer].sub(amount);
+        require(balances[buyer].left >= amount, "not enough storage to spend.");
+        balances[buyer].left = balances[buyer].left.sub(amount);
         emit Spent(buyer, amount);
     }
 
@@ -82,13 +91,17 @@ contract BuyBackResource is ResourceWithChannel, IResource {
 		buyBackReceiver = newReceiver;
 	}
 
+	function setExpiration(uint256 _expiration) external onlyOwner {
+		expiration = _expiration;
+	}
+
 	function buyBack(
 		address[] memory path,
 		uint256 value,
 		uint256 amountOutMin,
 		uint256 deadline
 	) external onlyOwner {
-		require(path.length > 1, "BuyBack: path invalid.");
+		require(path.length > 1, "path invalid.");
  		IERC20(path[0]).safeApprove(address(routerV2), value);
         routerV2.swapExactTokensForTokens(
             value,

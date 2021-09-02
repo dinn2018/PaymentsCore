@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
 import "../interfaces/IResource.sol";
-import "./ResourceWithChannel.sol";
+import "../access/Permitable.sol";
 
-contract SimpleResourceETH is ResourceWithChannel, IResource {
+contract SimpleResourceETH is Permitable, IResource {
 
     using SafeMath for uint256;
 
@@ -31,11 +31,10 @@ contract SimpleResourceETH is ResourceWithChannel, IResource {
 
     constructor(
         address owner,
-        IRootChannel _channel,
         address _WETH,
         uint256 _price,
         address _beneficiary
-    ) ResourceWithChannel(_channel) {
+    ) {
         transferOwnership(owner);
         valuationToken = _WETH;
         price = _price;

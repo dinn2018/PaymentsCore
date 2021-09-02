@@ -17,7 +17,7 @@ abstract contract ResourceWithChannel is Permitable {
         channel = _channel;
     }
 
-    function sendMessageToChild(bytes memory message) internal  {
+    function sendMessageToChild(bytes memory message) internal {
         channel.sendMessageToChild(message);
     }
     

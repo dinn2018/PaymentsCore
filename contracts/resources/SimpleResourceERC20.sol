@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
 import "../interfaces/IResource.sol";
-import "./ResourceWithChannel.sol";
+import "../access/Permitable.sol";
 
-contract SimpleResourceERC20 is ResourceWithChannel, IResource {
+contract SimpleResourceERC20 is Permitable, IResource {
 
     using SafeMath for uint256;
 
@@ -31,11 +31,10 @@ contract SimpleResourceERC20 is ResourceWithChannel, IResource {
 
     constructor(
         address owner,
-        IRootChannel _channel,
         IERC20 _valuationToken,
         uint256 _price,
         address _beneficiary
-    ) ResourceWithChannel(_channel) {
+    ) {
         valuationToken = address(_valuationToken);
         price = _price;
         // will receive `token` to current contract
@@ -43,7 +42,7 @@ contract SimpleResourceERC20 is ResourceWithChannel, IResource {
         transferOwnership(owner);
     }
 
-    function spend(address buyer, uint256 amount) external override onlyChannel {
+    function spend(address buyer, uint256 amount) external override onlyPermit {
         require(balances[buyer] >= amount, "Resource: not enough resources to spend.");
         balances[buyer] = balances[buyer].sub(amount);
         emit Spent(buyer, amount);
