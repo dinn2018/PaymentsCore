@@ -2,13 +2,13 @@
 
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
-import "../interfaces/IInternalSwapResource.sol";
-import "./ResourceWithChannel.sol";
+import '../interfaces/IInternalSwapResource.sol';
+import './ResourceWithChannel.sol';
 
 contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource {
 
@@ -34,7 +34,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
     // For resource extral info
     mapping(uint256 => bytes) public slots;
 
-    bytes4 public childBuy = bytes4(keccak256("buy(address,address,uint256)"));
+    bytes4 public childBuy = bytes4(keccak256('buy(address,address,uint256)'));
 
     constructor(
         address owner,
@@ -69,7 +69,7 @@ contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource
     }
 
     function spend(address buyer, uint256 amount) external override onlyChannel {
-        require(balances[buyer] >= amount, "Resource: not enough resources to spend.");
+        require(balances[buyer] >= amount, 'Resource: not enough resources to spend.');
         balances[buyer] = balances[buyer].sub(amount);
         emit Spent(buyer, amount);
     }

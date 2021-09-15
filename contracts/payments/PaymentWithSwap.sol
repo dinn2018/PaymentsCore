@@ -2,14 +2,14 @@
 
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
-import "../libraries/ResourceLibrary.sol";
-import "../interfaces/IPaymentWithSwap.sol";
-import "./BasePayment.sol";
+import '../libraries/ResourceLibrary.sol';
+import '../interfaces/IPaymentWithSwap.sol';
+import './BasePayment.sol';
 
 abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 
@@ -26,9 +26,9 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 amountOutMin,
         uint256 deadline
     ) external override returns (uint256 amount) {
-        require(resource.safeValuationToken() != address(0), "Payment: resource has no valuation token.");
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(address(resource.safeValuationToken()) != WETH, "Payment: resource valuated by ETH.");
+        require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(address(resource.safeValuationToken()) != WETH, 'Payment: resource valuated by ETH.');
         IERC20 tokenIn = IERC20(prePath[0]);
         address buyer = msg.sender;
         tokenIn.safeTransferFrom(buyer, address(this), valueIn);
@@ -53,9 +53,9 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 valueInMax,
         uint256 deadline
     ) external override returns (uint256 value) {
-        require(resource.safeValuationToken() != address(0), "Payment: resource has no valuation token.");
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(address(resource.safeValuationToken()) != WETH, "Payment: resource valuated by ETH.");
+        require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(address(resource.safeValuationToken()) != WETH, 'Payment: resource valuated by ETH.');
         IERC20 tokenIn = IERC20(prePath[0]);
         address buyer = msg.sender;
         uint256 valueOut = resource.safeGetValue(amountOut);
@@ -84,9 +84,9 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 amountOutMin,
         uint256 deadline
     ) external payable override returns (uint256 amount) {
-        require(resource.safeValuationToken() != address(0), "Payment: resource has no valuation token.");
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(prePath[0] == WETH, "Payment: WETH not the first address in pre path.");
+        require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(prePath[0] == WETH, 'Payment: WETH not the first address in pre path.');
         address buyer = msg.sender;
         uint256 valueIn = msg.value;
         uint256 valueOutMin = resource.safeGetValue(amountOutMin);
@@ -107,9 +107,9 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 amountOut,
         uint256 deadline
     ) external payable override returns (uint256 value) {
-        require(resource.safeValuationToken() != address(0), "Payment: resource has no valuation token.");
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(prePath[0] == WETH, "Payment: WETH not the first address in pre path.");
+        require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(prePath[0] == WETH, 'Payment: WETH not the first address in pre path.');
         address buyer = msg.sender;
         uint256 valueOut = resource.safeGetValue(amountOut);
         uint256[] memory valuesIn = routerV2.swapETHForExactTokens{value: msg.value}(
@@ -133,8 +133,8 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 amountOutMin,
         uint256 deadline
     ) external override returns (uint256 amount) {
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(resource.safeValuationToken() == WETH, "Payment: resource not valuated by WETH.");
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by WETH.');
         address buyer = msg.sender;
         address tokenIn = prePath[0];
         IERC20(tokenIn).safeTransferFrom(buyer, address(this), valueIn);
@@ -159,8 +159,8 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
         uint256 valueInMax,
         uint256 deadline
     ) external override returns (uint256 value) {
-        require(prePath.length > 0, "Payment: empty pre path.");
-        require(resource.safeValuationToken() == WETH, "Payment: resource not valuated by WETH.");
+        require(prePath.length > 0, 'Payment: empty pre path.');
+        require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by WETH.');
         address buyer = msg.sender;
         address tokenIn = prePath[0];
         IERC20(tokenIn).safeTransferFrom(buyer, address(this), valueInMax);

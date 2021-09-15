@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
+import '@openzeppelin/contracts/utils/Address.sol';
 
-import "fx-portal/contracts/lib/RLPReader.sol";
-import "fx-portal/contracts/lib/MerklePatriciaProof.sol";
-import "fx-portal/contracts/lib/Merkle.sol";
+import 'fx-portal/contracts/lib/RLPReader.sol';
+import 'fx-portal/contracts/lib/MerklePatriciaProof.sol';
+import 'fx-portal/contracts/lib/Merkle.sol';
 
-import "../access/Permitable.sol";
-import "../interfaces/IRootChannel.sol";
+import '../access/Permitable.sol';
+import '../interfaces/IRootChannel.sol';
 
 interface IStateSender {
     function sendMessageToChild(address _receiver, bytes calldata _data) external;
@@ -43,7 +42,7 @@ contract RootChannel is Permitable, IRootChannel {
     IStateSender public root;
     // root chain manager
     ICheckpointManager public checkpointManager;
-    // child channel contract which receives and sends messages 
+    // child channel contract which receives and sends messages
     address public childChannel;
 
     // storage to avoid duplicate exits
@@ -57,7 +56,11 @@ contract RootChannel is Permitable, IRootChannel {
     // _checkpointManager 0x86e4dc95c7fbdbf52e33d563bbdb00823894c287
     // _root 0xfe5e5D361b2ad62c541bAb87C45a0B9B018389a2
 
-    constructor(address owner, ICheckpointManager _checkpointManager, IStateSender _root) {
+    constructor(
+        address owner,
+        ICheckpointManager _checkpointManager,
+        IStateSender _root
+    ) {
         checkpointManager = _checkpointManager;
         root = _root;
         transferOwnership(owner);
@@ -76,14 +79,12 @@ contract RootChannel is Permitable, IRootChannel {
      *   abi.encode(tokenId, tokenMetadata);
      *   abi.encode(messageType, messageData);
      */
-    function sendMessageToChild(bytes memory message) public requireChild override onlyPermit {
+    function sendMessageToChild(bytes memory message) public override requireChild onlyPermit {
         root.sendMessageToChild(childChannel, message);
     }
 
     function _validateAndExtractMessage(bytes memory inputData) internal returns (bytes memory) {
-        RLPReader.RLPItem[] memory inputDataRLPList = inputData
-            .toRlpItem()
-            .toList();
+        RLPReader.RLPItem[] memory inputDataRLPList = inputData.toRlpItem().toList();
 
         // checking if exit has already been processed
         // unique exit is identified using hash of (blockNumber, branchMask, receiptLogIndex)
@@ -97,25 +98,18 @@ contract RootChannel is Permitable, IRootChannel {
                 inputDataRLPList[9].toUint() // receiptLogIndex
             )
         );
-        require(
-            processedExits[exitHash] == false,
-            "rootchannel: EXIT_ALREADY_PROCESSED"
-        );
+        require(processedExits[exitHash] == false, 'rootchannel: EXIT_ALREADY_PROCESSED');
         processedExits[exitHash] = true;
 
-        RLPReader.RLPItem[] memory receiptRLPList = inputDataRLPList[6]
-            .toBytes()
-            .toRlpItem()
-            .toList();
-        RLPReader.RLPItem memory logRLP = receiptRLPList[3]
-            .toList()[
-                inputDataRLPList[9].toUint() // receiptLogIndex
-            ];
+        RLPReader.RLPItem[] memory receiptRLPList = inputDataRLPList[6].toBytes().toRlpItem().toList();
+        RLPReader.RLPItem memory logRLP = receiptRLPList[3].toList()[
+            inputDataRLPList[9].toUint() // receiptLogIndex
+        ];
 
         RLPReader.RLPItem[] memory logRLPList = logRLP.toList();
-        
+
         // check child channel
-        require(childChannel == RLPReader.toAddress(logRLPList[0]), "rootchannel: INVALID_FX_CHILD_channel");
+        require(childChannel == RLPReader.toAddress(logRLPList[0]), 'rootchannel: INVALID_FX_CHILD_channel');
 
         // verify receipt inclusion
         require(
@@ -125,7 +119,7 @@ contract RootChannel is Permitable, IRootChannel {
                 inputDataRLPList[7].toBytes(), // receiptProof
                 bytes32(inputDataRLPList[5].toUint()) // receiptRoot
             ),
-            "rootchannel: INVALID_RECEIPT_PROOF"
+            'rootchannel: INVALID_RECEIPT_PROOF'
         );
 
         // verify checkpoint inclusion
@@ -142,12 +136,12 @@ contract RootChannel is Permitable, IRootChannel {
 
         require(
             bytes32(logTopicRLPList[0].toUint()) == SEND_MESSAGE_EVENT_SIG, // topic0 is event sig
-            "rootchannel: INVALID_SIGNATURE"
+            'rootchannel: INVALID_SIGNATURE'
         );
 
         // received message data
         bytes memory receivedData = logRLPList[2].toBytes();
-        (bytes memory message) = abi.decode(receivedData, (bytes)); // event decodes params again, so decoding bytes to get message
+        bytes memory message = abi.decode(receivedData, (bytes)); // event decodes params again, so decoding bytes to get message
         return message;
     }
 
@@ -159,23 +153,15 @@ contract RootChannel is Permitable, IRootChannel {
         uint256 headerNumber,
         bytes memory blockProof
     ) private view returns (uint256) {
-        (
-            bytes32 headerRoot,
-            uint256 startBlock,
-            ,
-            uint256 createdAt,
-        ) = checkpointManager.headerBlocks(headerNumber);
+        (bytes32 headerRoot, uint256 startBlock, , uint256 createdAt, ) = checkpointManager.headerBlocks(headerNumber);
 
         require(
-            keccak256(
-                abi.encodePacked(blockNumber, blockTime, txRoot, receiptRoot)
-            )
-                .checkMembership(
-                blockNumber-startBlock,
+            keccak256(abi.encodePacked(blockNumber, blockTime, txRoot, receiptRoot)).checkMembership(
+                blockNumber - startBlock,
                 headerRoot,
                 blockProof
             ),
-            "rootchannel: INVALID_HEADER"
+            'rootchannel: INVALID_HEADER'
         );
         return createdAt;
     }
@@ -209,13 +195,12 @@ contract RootChannel is Permitable, IRootChannel {
      * @param message bytes message that was sent from Child channel
      */
     function _processMessageFromChild(bytes memory message) internal {
-        (address caller, bytes memory data) = abi.decode(message, (address,bytes));
+        (address caller, bytes memory data) = abi.decode(message, (address, bytes));
         caller.functionCall(data);
     }
 
     modifier requireChild() {
-        require(address(0) != childChannel, "ChildChannel required.");
+        require(address(0) != childChannel, 'ChildChannel required.');
         _;
     }
-
 }

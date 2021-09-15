@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 abstract contract Permitable is Ownable {
 
@@ -13,7 +13,7 @@ abstract contract Permitable is Ownable {
     }
 
     modifier onlyPermit() {
-        require(permits[msg.sender], "Permitable: caller is not permitted.");
+        require(permits[msg.sender], 'Permitable: caller is not permitted.');
         _;
     }
 }

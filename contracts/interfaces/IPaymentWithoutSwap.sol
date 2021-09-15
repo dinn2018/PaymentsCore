@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.3;
 
-import "./IResource.sol";
+import './IResource.sol';
 
 interface IPaymentWithoutSwap {
 

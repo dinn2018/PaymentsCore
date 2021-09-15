@@ -2,9 +2,9 @@
 
 pragma solidity >=0.7.3;
 
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
-import "./IResource.sol";
+import './IResource.sol';
 
 interface IInternalSwapResource is IResource {
 

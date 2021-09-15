@@ -2,8 +2,8 @@
 
 pragma solidity >=0.7.3;
 
-import "../interfaces/IRootChannel.sol";
-import "../access/Permitable.sol";
+import '../interfaces/IRootChannel.sol';
+import '../access/Permitable.sol';
 
 abstract contract ResourceWithChannel is Permitable {
 
@@ -22,7 +22,7 @@ abstract contract ResourceWithChannel is Permitable {
     }
     
     modifier onlyChannel() {
-        require(msg.sender == address(channel), "ResourceWithChannel: Can be called by channel only.");
+        require(msg.sender == address(channel), 'ResourceWithChannel: Can be called by channel only.');
         _;
     }
 

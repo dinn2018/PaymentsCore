@@ -2,13 +2,13 @@
 
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
-import "../interfaces/IResource.sol";
-import "../access/Permitable.sol";
+import '../interfaces/IResource.sol';
+import '../access/Permitable.sol';
 
 contract SimpleResourceETH is Permitable, IResource {
 
@@ -42,7 +42,7 @@ contract SimpleResourceETH is Permitable, IResource {
     }
 
     function spend(address buyer, uint256 amount) external override onlyPermit {
-        require(balances[buyer] >= amount, "Resource: not enough resources to spend.");
+        require(balances[buyer] >= amount, 'Resource: not enough resources to spend.');
         balances[buyer] = balances[buyer].sub(amount);
         emit Spent(buyer, amount);
     }

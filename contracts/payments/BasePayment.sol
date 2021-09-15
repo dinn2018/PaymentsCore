@@ -2,8 +2,8 @@
 
 pragma solidity >=0.7.3;
 
-import "../interfaces/IResource.sol";
-import "../libraries/ResourceLibrary.sol";
+import '../interfaces/IResource.sol';
+import '../libraries/ResourceLibrary.sol';
 
 abstract contract BasePayment {
 

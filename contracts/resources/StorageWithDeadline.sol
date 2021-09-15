@@ -2,13 +2,13 @@
 
 pragma solidity >=0.7.3;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
-import "../interfaces/IResource.sol";
-import "./ResourceWithChannel.sol";
+import '../interfaces/IResource.sol';
+import './ResourceWithChannel.sol';
 
 contract StorageWithDeadline is ResourceWithChannel, IResource {
 
@@ -37,7 +37,7 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
     // For resource extral info
     mapping(uint256 => bytes) public slots;
 
-    bytes4 public mintStorage = bytes4(keccak256("mintStorage(address,address,uint256,uint256)"));
+    bytes4 public mintStorage = bytes4(keccak256('mintStorage(address,address,uint256,uint256)'));
 
 	uint256 public expiration;
 
@@ -66,7 +66,7 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
     }
 
     function spend(address buyer, uint256 amount) external override onlyChannel {
-        require(balances[buyer].left >= amount, "not enough storage to spend.");
+        require(balances[buyer].left >= amount, 'not enough storage to spend.');
         balances[buyer].left = balances[buyer].left.sub(amount);
         emit Spent(buyer, amount);
     }
@@ -101,7 +101,7 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 		uint256 amountOutMin,
 		uint256 deadline
 	) external onlyOwner {
-		require(path.length > 1, "path invalid.");
+		require(path.length > 1, 'path invalid.');
  		IERC20(path[0]).safeApprove(address(routerV2), value);
         routerV2.swapExactTokensForTokens(
             value,
