@@ -22,19 +22,12 @@ abstract contract PaymentWithoutSwap is BasePayment, IPaymentWithoutSwap {
 		uint256 valueIn,
 		uint256 amountOutMin
 	) external override returns (uint256 amount) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		address buyer = msg.sender;
 		amount = resource.safeGetAmount(valueIn);
 		require(amount >= amountOutMin, 'Payment: insufficient value.');
 		address token = resource.safeValuationToken();
-		IERC20(token).safeTransferFrom(
-			buyer,
-			resource.safeBeneficiary(),
-			valueIn
-		);
+		IERC20(token).safeTransferFrom(buyer, resource.safeBeneficiary(), valueIn);
 		_buyAfter(resource, buyer, amount, valueIn);
 	}
 
@@ -43,30 +36,17 @@ abstract contract PaymentWithoutSwap is BasePayment, IPaymentWithoutSwap {
 		uint256 amountOut,
 		uint256 valueInMax
 	) external override returns (uint256 value) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		address buyer = msg.sender;
 		address token = resource.safeValuationToken();
 		value = resource.safeGetValue(amountOut);
 		require(value <= valueInMax, 'Payment: insufficient value.');
-		IERC20(token).safeTransferFrom(
-			buyer,
-			resource.safeBeneficiary(),
-			value
-		);
+		IERC20(token).safeTransferFrom(buyer, resource.safeBeneficiary(), value);
 		_buyAfter(resource, buyer, amountOut, value);
 	}
 
-	function buyETHValuatedResourceByExactETH(
-		IResource resource,
-		uint256 amountOutMin
-	) external payable override returns (uint256 amount) {
-		require(
-			resource.safeValuationToken() == WETH,
-			'Payment: resource not valuated by ETH.'
-		);
+	function buyETHValuatedResourceByExactETH(IResource resource, uint256 amountOutMin) external payable override returns (uint256 amount) {
+		require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by ETH.');
 		address buyer = msg.sender;
 		uint256 valueIn = msg.value;
 		amount = resource.safeGetAmount(valueIn);
@@ -75,14 +55,8 @@ abstract contract PaymentWithoutSwap is BasePayment, IPaymentWithoutSwap {
 		_buyAfter(resource, buyer, amount, valueIn);
 	}
 
-	function buyExactETHValuatedResourceByETH(
-		IResource resource,
-		uint256 amountOut
-	) external payable override returns (uint256 value) {
-		require(
-			resource.safeValuationToken() == WETH,
-			'Payment: resource not valuated by ETH.'
-		);
+	function buyExactETHValuatedResourceByETH(IResource resource, uint256 amountOut) external payable override returns (uint256 value) {
+		require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by ETH.');
 		address buyer = msg.sender;
 		value = resource.safeGetValue(amountOut);
 		require(value <= msg.value, 'Payment: insufficient value.');

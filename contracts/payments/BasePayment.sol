@@ -8,18 +8,9 @@ import '../libraries/ResourceLibrary.sol';
 abstract contract BasePayment {
 	using ResourceLibrary for IResource;
 
-	event Bought(
-		IResource indexed resource,
-		address indexed buyer,
-		uint256 amount,
-		uint256 value
-	);
+	event Bought(IResource indexed resource, address indexed buyer, uint256 amount, uint256 value);
 
-	event SpendRollUp(
-		IResource indexed resource,
-		address indexed buyer,
-		uint256 amount
-	);
+	event SpendRollUp(IResource indexed resource, address indexed buyer, uint256 amount);
 
 	IUniswapV2Router02 public routerV2;
 

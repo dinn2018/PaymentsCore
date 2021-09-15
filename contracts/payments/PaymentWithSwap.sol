@@ -25,27 +25,15 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 amountOutMin,
 		uint256 deadline
 	) external override returns (uint256 amount) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			address(resource.safeValuationToken()) != WETH,
-			'Payment: resource valuated by ETH.'
-		);
+		require(address(resource.safeValuationToken()) != WETH, 'Payment: resource valuated by ETH.');
 		IERC20 tokenIn = IERC20(prePath[0]);
 		address buyer = msg.sender;
 		tokenIn.safeTransferFrom(buyer, address(this), valueIn);
 		tokenIn.safeApprove(address(routerV2), valueIn);
 		uint256 valueOutMin = resource.safeGetValue(amountOutMin);
-		uint256[] memory valuesOut = routerV2.swapExactTokensForTokens(
-			valueIn,
-			valueOutMin,
-			path(resource, prePath),
-			resource.safeBeneficiary(),
-			deadline
-		);
+		uint256[] memory valuesOut = routerV2.swapExactTokensForTokens(valueIn, valueOutMin, path(resource, prePath), resource.safeBeneficiary(), deadline);
 		uint256 valueOut = valuesOut[valuesOut.length - 1];
 		amount = resource.safeGetAmount(valueOut);
 		_buyAfter(resource, buyer, amount, valueOut);
@@ -58,27 +46,15 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 valueInMax,
 		uint256 deadline
 	) external override returns (uint256 value) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			address(resource.safeValuationToken()) != WETH,
-			'Payment: resource valuated by ETH.'
-		);
+		require(address(resource.safeValuationToken()) != WETH, 'Payment: resource valuated by ETH.');
 		IERC20 tokenIn = IERC20(prePath[0]);
 		address buyer = msg.sender;
 		uint256 valueOut = resource.safeGetValue(amountOut);
 		tokenIn.safeTransferFrom(buyer, address(this), valueInMax);
 		tokenIn.safeIncreaseAllowance(address(routerV2), valueInMax);
-		uint256[] memory valuesIn = routerV2.swapTokensForExactTokens(
-			valueOut,
-			valueInMax,
-			path(resource, prePath),
-			resource.safeBeneficiary(),
-			deadline
-		);
+		uint256[] memory valuesIn = routerV2.swapTokensForExactTokens(valueOut, valueInMax, path(resource, prePath), resource.safeBeneficiary(), deadline);
 		// refund to user.
 		value = valuesIn[0];
 		if (value < valueInMax) {
@@ -95,21 +71,13 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 amountOutMin,
 		uint256 deadline
 	) external payable override returns (uint256 amount) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			prePath[0] == WETH,
-			'Payment: WETH not the first address in pre path.'
-		);
+		require(prePath[0] == WETH, 'Payment: WETH not the first address in pre path.');
 		address buyer = msg.sender;
 		uint256 valueIn = msg.value;
 		uint256 valueOutMin = resource.safeGetValue(amountOutMin);
-		uint256[] memory valuesOut = routerV2.swapExactETHForTokens{
-			value: valueIn
-		}(
+		uint256[] memory valuesOut = routerV2.swapExactETHForTokens{ value: valueIn }(
 			valueOutMin,
 			path(resource, prePath),
 			resource.safeBeneficiary(),
@@ -126,25 +94,12 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 amountOut,
 		uint256 deadline
 	) external payable override returns (uint256 value) {
-		require(
-			resource.safeValuationToken() != address(0),
-			'Payment: resource has no valuation token.'
-		);
+		require(resource.safeValuationToken() != address(0), 'Payment: resource has no valuation token.');
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			prePath[0] == WETH,
-			'Payment: WETH not the first address in pre path.'
-		);
+		require(prePath[0] == WETH, 'Payment: WETH not the first address in pre path.');
 		address buyer = msg.sender;
 		uint256 valueOut = resource.safeGetValue(amountOut);
-		uint256[] memory valuesIn = routerV2.swapETHForExactTokens{
-			value: msg.value
-		}(
-			valueOut,
-			path(resource, prePath),
-			resource.safeBeneficiary(),
-			deadline
-		);
+		uint256[] memory valuesIn = routerV2.swapETHForExactTokens{ value: msg.value }(valueOut, path(resource, prePath), resource.safeBeneficiary(), deadline);
 		value = valuesIn[0];
 		if (msg.value > value) {
 			// refund buyer.
@@ -161,22 +116,13 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 deadline
 	) external override returns (uint256 amount) {
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			resource.safeValuationToken() == WETH,
-			'Payment: resource not valuated by WETH.'
-		);
+		require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by WETH.');
 		address buyer = msg.sender;
 		address tokenIn = prePath[0];
 		IERC20(tokenIn).safeTransferFrom(buyer, address(this), valueIn);
 		IERC20(tokenIn).safeApprove(address(routerV2), valueIn);
 		uint256 valueOutMin = resource.safeGetValue(amountOutMin);
-		uint256[] memory valuesOut = routerV2.swapExactTokensForETH(
-			valueIn,
-			valueOutMin,
-			path(resource, prePath),
-			resource.safeBeneficiary(),
-			deadline
-		);
+		uint256[] memory valuesOut = routerV2.swapExactTokensForETH(valueIn, valueOutMin, path(resource, prePath), resource.safeBeneficiary(), deadline);
 		uint256 valueOut = valuesOut[valuesOut.length - 1];
 		amount = resource.safeGetAmount(valueOut);
 		_buyAfter(resource, buyer, amount, valueOut);
@@ -190,22 +136,13 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		uint256 deadline
 	) external override returns (uint256 value) {
 		require(prePath.length > 0, 'Payment: empty pre path.');
-		require(
-			resource.safeValuationToken() == WETH,
-			'Payment: resource not valuated by WETH.'
-		);
+		require(resource.safeValuationToken() == WETH, 'Payment: resource not valuated by WETH.');
 		address buyer = msg.sender;
 		address tokenIn = prePath[0];
 		IERC20(tokenIn).safeTransferFrom(buyer, address(this), valueInMax);
 		IERC20(tokenIn).safeIncreaseAllowance(address(routerV2), valueInMax);
 		uint256 valueOut = resource.safeGetValue(amountOut);
-		uint256[] memory valuesIn = routerV2.swapTokensForExactETH(
-			valueOut,
-			valueInMax,
-			path(resource, prePath),
-			resource.safeBeneficiary(),
-			deadline
-		);
+		uint256[] memory valuesIn = routerV2.swapTokensForExactETH(valueOut, valueInMax, path(resource, prePath), resource.safeBeneficiary(), deadline);
 		value = valuesIn[0];
 		if (valueInMax > value) {
 			uint256 left = valueInMax.sub(value);
@@ -231,12 +168,7 @@ abstract contract PaymentWithSwap is BasePayment, IPaymentWithSwap {
 		return resource.getValuesIn(routerV2, amountOut, prePath);
 	}
 
-	function path(IResource resource, address[] memory prePath)
-		public
-		view
-		override
-		returns (address[] memory fullPath)
-	{
+	function path(IResource resource, address[] memory prePath) public view override returns (address[] memory fullPath) {
 		return resource.path(prePath);
 	}
 }

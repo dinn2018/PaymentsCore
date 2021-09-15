@@ -116,8 +116,5 @@ interface IPaymentWithSwap {
 		uint256 amountOut
 	) external view returns (uint256[] memory valuesIn);
 
-	function path(IResource resource, address[] memory prePath)
-		external
-		view
-		returns (address[] memory fullPath);
+	function path(IResource resource, address[] memory prePath) external view returns (address[] memory fullPath);
 }

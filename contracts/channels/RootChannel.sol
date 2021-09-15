@@ -11,8 +11,7 @@ import '../access/Permitable.sol';
 import '../interfaces/IRootChannel.sol';
 
 interface IStateSender {
-	function sendMessageToChild(address _receiver, bytes calldata _data)
-		external;
+	function sendMessageToChild(address _receiver, bytes calldata _data) external;
 }
 
 contract ICheckpointManager {
@@ -37,8 +36,7 @@ contract RootChannel is Permitable, IRootChannel {
 	using RLPReader for RLPReader.RLPItem;
 	using Merkle for bytes32;
 	// keccak256(MessageSent(bytes))
-	bytes32 public constant SEND_MESSAGE_EVENT_SIG =
-		0x8c5261668696ce22758910d05bab8f186d6eb247ceac2af2e82c7dc17669b036;
+	bytes32 public constant SEND_MESSAGE_EVENT_SIG = 0x8c5261668696ce22758910d05bab8f186d6eb247ceac2af2e82c7dc17669b036;
 
 	// state sender contract
 	IStateSender public root;
@@ -69,11 +67,7 @@ contract RootChannel is Permitable, IRootChannel {
 	}
 
 	// set ChildChannel if not set already
-	function setChildChannel(address _childChannel)
-		external
-		override
-		onlyOwner
-	{
+	function setChildChannel(address _childChannel) external override onlyOwner {
 		childChannel = _childChannel;
 	}
 
@@ -85,22 +79,12 @@ contract RootChannel is Permitable, IRootChannel {
 	 *   abi.encode(tokenId, tokenMetadata);
 	 *   abi.encode(messageType, messageData);
 	 */
-	function sendMessageToChild(bytes memory message)
-		public
-		override
-		requireChild
-		onlyPermit
-	{
+	function sendMessageToChild(bytes memory message) public override requireChild onlyPermit {
 		root.sendMessageToChild(childChannel, message);
 	}
 
-	function _validateAndExtractMessage(bytes memory inputData)
-		internal
-		returns (bytes memory)
-	{
-		RLPReader.RLPItem[] memory inputDataRLPList = inputData
-			.toRlpItem()
-			.toList();
+	function _validateAndExtractMessage(bytes memory inputData) internal returns (bytes memory) {
+		RLPReader.RLPItem[] memory inputDataRLPList = inputData.toRlpItem().toList();
 
 		// checking if exit has already been processed
 		// unique exit is identified using hash of (blockNumber, branchMask, receiptLogIndex)
@@ -110,22 +94,14 @@ contract RootChannel is Permitable, IRootChannel {
 				// first 2 nibbles are dropped while generating nibble array
 				// this allows branch masks that are valid but bypass exitHash check (changing first 2 nibbles only)
 				// so converting to nibble array and then hashing it
-				MerklePatriciaProof._getNibbleArray(
-					inputDataRLPList[8].toBytes()
-				), // branchMask
+				MerklePatriciaProof._getNibbleArray(inputDataRLPList[8].toBytes()), // branchMask
 				inputDataRLPList[9].toUint() // receiptLogIndex
 			)
 		);
-		require(
-			processedExits[exitHash] == false,
-			'rootchannel: EXIT_ALREADY_PROCESSED'
-		);
+		require(processedExits[exitHash] == false, 'rootchannel: EXIT_ALREADY_PROCESSED');
 		processedExits[exitHash] = true;
 
-		RLPReader.RLPItem[] memory receiptRLPList = inputDataRLPList[6]
-			.toBytes()
-			.toRlpItem()
-			.toList();
+		RLPReader.RLPItem[] memory receiptRLPList = inputDataRLPList[6].toBytes().toRlpItem().toList();
 		RLPReader.RLPItem memory logRLP = receiptRLPList[3].toList()[
 			inputDataRLPList[9].toUint() // receiptLogIndex
 		];
@@ -133,10 +109,7 @@ contract RootChannel is Permitable, IRootChannel {
 		RLPReader.RLPItem[] memory logRLPList = logRLP.toList();
 
 		// check child channel
-		require(
-			childChannel == RLPReader.toAddress(logRLPList[0]),
-			'rootchannel: INVALID_FX_CHILD_channel'
-		);
+		require(childChannel == RLPReader.toAddress(logRLPList[0]), 'rootchannel: INVALID_FX_CHILD_channel');
 
 		// verify receipt inclusion
 		require(
@@ -180,18 +153,10 @@ contract RootChannel is Permitable, IRootChannel {
 		uint256 headerNumber,
 		bytes memory blockProof
 	) private view returns (uint256) {
-		(
-			bytes32 headerRoot,
-			uint256 startBlock,
-			,
-			uint256 createdAt,
-
-		) = checkpointManager.headerBlocks(headerNumber);
+		(bytes32 headerRoot, uint256 startBlock, , uint256 createdAt, ) = checkpointManager.headerBlocks(headerNumber);
 
 		require(
-			keccak256(
-				abi.encodePacked(blockNumber, blockTime, txRoot, receiptRoot)
-			).checkMembership(blockNumber - startBlock, headerRoot, blockProof),
+			keccak256(abi.encodePacked(blockNumber, blockTime, txRoot, receiptRoot)).checkMembership(blockNumber - startBlock, headerRoot, blockProof),
 			'rootchannel: INVALID_HEADER'
 		);
 		return createdAt;
@@ -213,11 +178,7 @@ contract RootChannel is Permitable, IRootChannel {
 	 *  8 - branchMask - 32 bits denoting the path of receipt in merkle tree
 	 *  9 - receiptLogIndex - Log Index to read from the receipt
 	 */
-	function receiveMessage(bytes memory inputData)
-		external
-		override
-		onlyOwner
-	{
+	function receiveMessage(bytes memory inputData) external override onlyOwner {
 		bytes memory message = _validateAndExtractMessage(inputData);
 		_processMessageFromChild(message);
 	}
@@ -230,10 +191,7 @@ contract RootChannel is Permitable, IRootChannel {
 	 * @param message bytes message that was sent from Child channel
 	 */
 	function _processMessageFromChild(bytes memory message) internal {
-		(address caller, bytes memory data) = abi.decode(
-			message,
-			(address, bytes)
-		);
+		(address caller, bytes memory data) = abi.decode(message, (address, bytes));
 		caller.functionCall(data);
 	}
 

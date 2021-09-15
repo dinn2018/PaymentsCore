@@ -41,10 +41,7 @@ contract SimpleResourceETH is Permitable, IResource {
 	}
 
 	function spend(address buyer, uint256 amount) external override onlyPermit {
-		require(
-			balances[buyer] >= amount,
-			'Resource: not enough resources to spend.'
-		);
+		require(balances[buyer] >= amount, 'Resource: not enough resources to spend.');
 		balances[buyer] = balances[buyer].sub(amount);
 		emit Spent(buyer, amount);
 	}

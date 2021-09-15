@@ -10,10 +10,7 @@ import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '../interfaces/IInternalSwapResource.sol';
 import './ResourceWithChannel.sol';
 
-contract InternalSwapResourceERC20 is
-	ResourceWithChannel,
-	IInternalSwapResource
-{
+contract InternalSwapResourceERC20 is ResourceWithChannel, IInternalSwapResource {
 	using SafeMath for uint256;
 
 	using SafeERC20 for IERC20;
@@ -63,28 +60,13 @@ contract InternalSwapResourceERC20 is
 	) external override onlyPermit {
 		balances[buyer] = balances[buyer].add(amount);
 		IERC20(valuationToken).safeApprove(address(routerV2), value);
-		routerV2.swapExactTokensForTokens(
-			value,
-			0,
-			swapPath(),
-			swapReceiver,
-			block.timestamp.add(10)
-		);
-		sendMessageToChild(
-			abi.encodeWithSelector(childBuy, address(this), buyer, amount)
-		);
+		routerV2.swapExactTokensForTokens(value, 0, swapPath(), swapReceiver, block.timestamp.add(10));
+		sendMessageToChild(abi.encodeWithSelector(childBuy, address(this), buyer, amount));
 		emit Bought(buyer, amount, value);
 	}
 
-	function spend(address buyer, uint256 amount)
-		external
-		override
-		onlyChannel
-	{
-		require(
-			balances[buyer] >= amount,
-			'Resource: not enough resources to spend.'
-		);
+	function spend(address buyer, uint256 amount) external override onlyChannel {
+		require(balances[buyer] >= amount, 'Resource: not enough resources to spend.');
 		balances[buyer] = balances[buyer].sub(amount);
 		emit Spent(buyer, amount);
 	}

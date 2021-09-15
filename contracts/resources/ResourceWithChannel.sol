@@ -21,10 +21,7 @@ abstract contract ResourceWithChannel is Permitable {
 	}
 
 	modifier onlyChannel() {
-		require(
-			msg.sender == address(channel),
-			'ResourceWithChannel: Can be called by channel only.'
-		);
+		require(msg.sender == address(channel), 'ResourceWithChannel: Can be called by channel only.');
 		_;
 	}
 }

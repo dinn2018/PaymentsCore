@@ -36,8 +36,7 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 	// For resource extral info
 	mapping(uint256 => bytes) public slots;
 
-	bytes4 public mintStorage =
-		bytes4(keccak256('mintStorage(address,address,uint256,uint256)'));
+	bytes4 public mintStorage = bytes4(keccak256('mintStorage(address,address,uint256,uint256)'));
 
 	uint256 public expiration;
 
@@ -65,23 +64,11 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 	) external override onlyPermit {
 		balances[buyer].total = balances[buyer].total.add(amount);
 		balances[buyer].left = balances[buyer].left.add(amount);
-		sendMessageToChild(
-			abi.encodeWithSelector(
-				mintStorage,
-				address(this),
-				buyer,
-				amount,
-				block.timestamp.add(expiration)
-			)
-		);
+		sendMessageToChild(abi.encodeWithSelector(mintStorage, address(this), buyer, amount, block.timestamp.add(expiration)));
 		emit Bought(buyer, amount, value);
 	}
 
-	function spend(address buyer, uint256 amount)
-		external
-		override
-		onlyChannel
-	{
+	function spend(address buyer, uint256 amount) external override onlyChannel {
 		require(balances[buyer].left >= amount, 'not enough storage to spend.');
 		balances[buyer].left = balances[buyer].left.sub(amount);
 		emit Spent(buyer, amount);
@@ -119,12 +106,6 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 	) external onlyOwner {
 		require(path.length > 1, 'path invalid.');
 		IERC20(path[0]).safeApprove(address(routerV2), value);
-		routerV2.swapExactTokensForTokens(
-			value,
-			amountOutMin,
-			path,
-			buyBackReceiver,
-			deadline
-		);
+		routerV2.swapExactTokensForTokens(value, amountOutMin, path, buyBackReceiver, deadline);
 	}
 }

@@ -31,17 +31,11 @@ interface IPaymentWithoutSwap {
 	/// @param resource resource contract address.
 	/// @param amountOutMin resource min amount out.
 	/// @return amount resource amount for purchase.
-	function buyETHValuatedResourceByExactETH(
-		IResource resource,
-		uint256 amountOutMin
-	) external payable returns (uint256 amount);
+	function buyETHValuatedResourceByExactETH(IResource resource, uint256 amountOutMin) external payable returns (uint256 amount);
 
 	/// @notice buy resource using `ETH` with exact resource amount.
 	/// @param resource resource contract address.
 	/// @param amountOut resource min amount out.
 	/// @return value `ETH` used for purchase.
-	function buyExactETHValuatedResourceByETH(
-		IResource resource,
-		uint256 amountOut
-	) external payable returns (uint256 value);
+	function buyExactETHValuatedResourceByETH(IResource resource, uint256 amountOut) external payable returns (uint256 value);
 }
