@@ -4,8 +4,11 @@ import 'solidity-coverage'
 import '@nomiclabs/hardhat-ethers'
 import '@typechain/hardhat'
 import './tasks'
-
 import { HardhatUserConfig } from 'hardhat/types'
+
+if (process.env.NODE_ENV !== 'build') {
+	import('./tasks')
+}
 
 if (process.env.HARDHAT_FORK) {
 	process.env['HARDHAT_DEPLOY_FORK'] = process.env.HARDHAT_FORK
