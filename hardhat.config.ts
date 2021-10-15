@@ -3,7 +3,6 @@ import 'hardhat-gas-reporter'
 import 'solidity-coverage'
 import '@nomiclabs/hardhat-ethers'
 import '@typechain/hardhat'
-import './tasks'
 import { HardhatUserConfig } from 'hardhat/types'
 
 if (process.env.NODE_ENV !== 'build') {
@@ -63,7 +62,7 @@ const config: HardhatUserConfig = {
 			live: true,
 			saveDeployments: true,
 			tags: ['staging'],
-			gasPrice: 5000000000,
+			gasPrice: 30 * 1e9,
 			gasMultiplier: 2,
 		},
 		mumbai: {

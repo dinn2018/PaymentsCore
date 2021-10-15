@@ -50,7 +50,8 @@ contract SimpleResourceERC20 is Permitable, IResource {
 	function buy(
 		address buyer,
 		uint256 amount,
-		uint256 value
+		uint256 value,
+		bytes memory data
 	) external override onlyPermit {
 		balances[buyer] = balances[buyer].add(amount);
 		emit Bought(buyer, amount, value);

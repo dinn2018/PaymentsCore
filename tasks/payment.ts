@@ -31,7 +31,7 @@ task('payment:getAmountOut', 'getValuesIn')
 		const getAmountOut = await payment.getAmountOut(
 			args.resource,
 			tokens,
-			toToken(args.vi)
+			toToken(args.vi),
 		)
 		console.log('getAmountOut', getAmountOut)
 	})
@@ -50,7 +50,8 @@ task('payment:buyExactTokenValuatedResourceByOtherToken', 'buyExactTokenValuated
 			tokens,
 			args.ao,
 			toToken(args.vimax),
-			args.deadline || defaultDeadline()
+			args.deadline || defaultDeadline(),
+			Buffer.alloc(0)
 		)
 		console.log('tx', tx)
 		const receipt = await tx.wait()
@@ -71,7 +72,8 @@ task('payment:buyTokenValuatedResourceByOtherExactToken', 'buyTokenValuatedResou
 			tokens,
 			toToken(args.vi),
 			args.aomin,
-			args.deadline || defaultDeadline()
+			args.deadline || defaultDeadline(),
+			Buffer.alloc(0)
 		)
 		console.log('tx', tx)
 		const receipt = await tx.wait()
@@ -92,6 +94,7 @@ task('payment:buyTokenValuatedResourceByExactETH', 'buyTokenValuatedResourceByEx
 			tokens,
 			args.aomin,
 			args.deadline || defaultDeadline(),
+			Buffer.alloc(0),
 			{
 				value: toToken(args.value),
 			}
@@ -115,6 +118,7 @@ task('payment:buyExactTokenValuatedResourceByETH', 'buyExactTokenValuatedResourc
 			tokens,
 			args.ao,
 			args.deadline || defaultDeadline(),
+			Buffer.alloc(0),
 			{
 				value: toToken(args.value),
 			}
@@ -138,6 +142,7 @@ task('payment:buyETHValuatedResourceByExactToken', 'buyETHValuatedResourceByExac
 			tokens,
 			toToken(args.vi),
 			args.aomin,
+			Buffer.alloc(0),
 			args.deadline || defaultDeadline(),
 		)
 		console.log('tx', tx)
@@ -159,6 +164,7 @@ task('payment:buyExactETHValuatedResourceByToken', 'buyExactETHValuatedResourceB
 			tokens,
 			args.ao,
 			toToken(args.vimax),
+			Buffer.alloc(0),
 			args.deadline || defaultDeadline(),
 		)
 		console.log('tx', tx)
@@ -177,6 +183,7 @@ task('payment:buyTokenValuatedResourceByExactToken', 'buyTokenValuatedResourceBy
 			args.resource,
 			toToken(args.vi),
 			args.aomin,
+			Buffer.alloc(0),
 		)
 		console.log('tx', tx)
 		const receipt = await tx.wait()
@@ -195,6 +202,7 @@ task('payment:buyExactTokenValuatedResourceByToken', 'buyExactTokenValuatedResou
 			args.resource,
 			args.ao,
 			toToken(args.vimax),
+			Buffer.alloc(0),
 		)
 		console.log('tx', tx)
 		const receipt = await tx.wait()
@@ -211,6 +219,7 @@ task('payment:buyETHValuatedResourceByExactETH', 'buyETHValuatedResourceByExactE
 		const tx = await payment.buyETHValuatedResourceByExactETH(
 			args.resource,
 			args.aom,
+			Buffer.alloc(0),
 			{
 				value: toToken(args.value)
 			}
@@ -230,6 +239,7 @@ task('payment:buyExactETHValuatedResourceByETH', 'buyExactETHValuatedResourceByE
 		const tx = await payment.buyExactETHValuatedResourceByETH(
 			args.resource,
 			args.ao,
+			Buffer.alloc(0),
 			{
 				value: toToken(args.value)
 			}

@@ -9,7 +9,5 @@ import './payments/PaymentWithSwap.sol';
 import './interfaces/IPayment.sol';
 
 contract Payment is PaymentWithoutSwap, PaymentWithSwap, IPayment {
-	constructor(IUniswapV2Router02 routerV2, address WETH)
-		BasePayment(routerV2, WETH)
-	{}
+	constructor(IUniswapV2Router02 routerV2, address WETH) BasePayment(routerV2, WETH) {}
 }

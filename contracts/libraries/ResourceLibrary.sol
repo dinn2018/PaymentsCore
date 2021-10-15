@@ -10,9 +10,10 @@ library ResourceLibrary {
 		IResource resource,
 		address buyer,
 		uint256 amount,
-		uint256 value
+		uint256 value,
+		bytes memory callData
 	) internal {
-		(bool success, bytes memory data) = address(resource).call(abi.encodeWithSelector(resource.buy.selector, buyer, amount, value));
+		(bool success, bytes memory data) = address(resource).call(abi.encodeWithSelector(resource.buy.selector, buyer, amount, value, callData));
 		require(success && data.length == 0, 'Resource: `buy` failed.');
 	}
 

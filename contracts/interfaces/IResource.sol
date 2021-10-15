@@ -10,7 +10,8 @@ interface IResource {
 	function buy(
 		address buyer,
 		uint256 amount,
-		uint256 value
+		uint256 value,
+		bytes memory data
 	) external;
 
 	function spend(address buyer, uint256 amount) external;

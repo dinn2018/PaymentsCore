@@ -60,16 +60,18 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 	function buy(
 		address buyer,
 		uint256 amount,
-		uint256 value
+		uint256 value,
+		bytes memory data
 	) external override onlyPermit {
+		uint256 expiration = abi.decode(data, (uint256));
 		balances[buyer].total = balances[buyer].total.add(amount);
 		balances[buyer].left = balances[buyer].left.add(amount);
-		sendMessageToChild(abi.encodeWithSelector(mintStorage, address(this), buyer, amount, block.timestamp.add(expiration)));
+		sendMessageToChild(abi.encodeWithSelector(mintStorage, address(this), buyer, amount, expiration));
 		emit Bought(buyer, amount, value);
 	}
 
 	function spend(address buyer, uint256 amount) external override onlyChannel {
-		require(balances[buyer].left >= amount, 'not enough storage to spend.');
+		require(balances[buyer].left >= amount, 'StorageWithDeadline: not enough storage to spend.');
 		balances[buyer].left = balances[buyer].left.sub(amount);
 		emit Spent(buyer, amount);
 	}
@@ -104,7 +106,7 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 		uint256 amountOutMin,
 		uint256 deadline
 	) external onlyOwner {
-		require(path.length > 1, 'path invalid.');
+		require(path.length > 1, 'StorageWithDeadline: path invalid.');
 		IERC20(path[0]).safeApprove(address(routerV2), value);
 		routerV2.swapExactTokensForTokens(value, amountOutMin, path, buyBackReceiver, deadline);
 	}

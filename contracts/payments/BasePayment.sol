@@ -25,9 +25,10 @@ abstract contract BasePayment {
 		IResource resource,
 		address buyer,
 		uint256 amount,
-		uint256 value
+		uint256 value,
+		bytes memory data
 	) internal {
-		resource.safeBuy(buyer, amount, value);
+		resource.safeBuy(buyer, amount, value, data);
 		emit Bought(resource, buyer, amount, value);
 	}
 }
