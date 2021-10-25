@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSE
 
-pragma solidity >=0.7.3;
+pragma solidity >=0.8.0;
 
 interface IResource {
 	event Bought(address indexed buyer, uint256 amount, uint256 value);

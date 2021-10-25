@@ -1,11 +1,12 @@
-// SPDX-License-Identifier: MIT
-pragma solidity >=0.7.3;
+// SPDX-License-Identifier: UNLICENSE
+
+pragma solidity >=0.8.0;
 
 import '@openzeppelin/contracts/utils/Address.sol';
 
-import 'fx-portal/contracts/lib/RLPReader.sol';
-import 'fx-portal/contracts/lib/MerklePatriciaProof.sol';
-import 'fx-portal/contracts/lib/Merkle.sol';
+import '@maticnetwork/fx-portal/contracts/lib/RLPReader.sol';
+import '@maticnetwork/fx-portal/contracts/lib/MerklePatriciaProof.sol';
+import '@maticnetwork/fx-portal/contracts/lib/Merkle.sol';
 
 import '../access/Permitable.sol';
 import '../interfaces/IRootChannel.sol';

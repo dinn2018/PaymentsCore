@@ -1,16 +1,16 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSE
 
-pragma solidity >=0.7.3;
+pragma solidity >=0.8.0;
 
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 
 import '../interfaces/IResource.sol';
 import './ResourceWithChannel.sol';
 
-contract StorageWithDeadline is ResourceWithChannel, IResource {
+contract StorageWithExpiration is ResourceWithChannel, IResource {
 	struct Balance {
 		uint256 total;
 		uint256 left;
@@ -38,8 +38,6 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 
 	bytes4 public mintStorage = bytes4(keccak256('mintStorage(address,address,uint256,uint256)'));
 
-	uint256 public expiration;
-
 	constructor(
 		address owner,
 		IRootChannel _channel,
@@ -53,7 +51,6 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 		buyBackReceiver = _buyBackReceiver;
 		routerV2 = _routerV2;
 		price = _price;
-		expiration = 7 days;
 		beneficiary = address(this);
 	}
 
@@ -94,10 +91,6 @@ contract StorageWithDeadline is ResourceWithChannel, IResource {
 
 	function transferBuyBackReceiver(address newReceiver) external onlyOwner {
 		buyBackReceiver = newReceiver;
-	}
-
-	function setExpiration(uint256 _expiration) external onlyOwner {
-		expiration = _expiration;
 	}
 
 	function buyBack(
