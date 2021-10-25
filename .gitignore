@@ -5,7 +5,10 @@ deploy/
 
 coverage*
 types/
-
+tasks/
+hardhat.config.ts
+scripts/
+test/
 .vscode/*
 !.vscode/settings.json.default
 !.vscode/launch.json.default
